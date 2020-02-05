@@ -73,7 +73,7 @@ inverse.
 
 Now a load or deformation vector can be applied. Here the load vector was used.
 The load vector is a 1 by 3 numpy matrix consists of the running loads and
-moments in the form of `(N_x, N_y, N_{xy}, M_x, M_y, M_{xy})^T`.
+moments in the form of :math:`(N_x, N_y, N_{xy}, M_x, M_y, M_{xy})^T`.
 Similarly a deformation vector is defined as
 :math:`(\varepsilon_x, \varepsilon_y, \varepsilon_{xy},\kappa_x, \kappa_y, \kappa_{xy})^T`.
 Afterwards the resulting ply stresses and loads (in their local axis system) 
