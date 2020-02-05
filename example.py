@@ -18,6 +18,7 @@ import abdCal
 import deformation
 import failure
 
+
 ###############################################################################
 # Ply Properties                                                              #
 ###############################################################################
@@ -40,6 +41,7 @@ t = 0.16  # mm
 # Calculate the ply stiffness matricess matrix
 Q = abdCal.QPlaneStress(El, Et, nult, G)
 
+
 ###############################################################################
 # Laminate Properites                                                         #
 ###############################################################################
@@ -52,6 +54,7 @@ Q = [Q] * len(angles_deg)
 abd = abdCal.abd(Q, angles_deg, thickness)
 abd_inv = abdCal.abd_inverse(abd)
 
+
 ###############################################################################
 # Applied Running Loads                                                       #
 ###############################################################################
@@ -59,7 +62,6 @@ abd_inv = abdCal.abd_inverse(abd)
 NM = np.matrix([0, 1, 0, 1, 0, 0]).T  # MPa/mm and MPa*mm/mm
 deformed = deformation.load_applied(abd_inv, NM)
 
-# TODO: check sign convention after bending, positive vs negative
 # Calculate the stress in each layer caused by the running loads
 strain = deformation.ply_strain(deformed, angles_deg, thickness, Q)
 stress = deformation.ply_stress(deformed, angles_deg, thickness, Q, plotting=True)
