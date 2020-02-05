@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Lamination Theory Calculator &#8212; Classical Laminate Theory Calculator 0.0.9 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/stylesheet.css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ABD Matrix Calculator" href="abdCal.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="abdCal.html" title="ABD Matrix Calculator"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Classical Laminate Theory Calculator 0.0.9 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="lamination-theory-calculator">
+<h1>Lamination Theory Calculator<a class="headerlink" href="#lamination-theory-calculator" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This set of scrips contains functions that can be used for the design of simple
+fibre composite laminates. The goal of this project is to create a open-source
+laminate theory calculator something that can compete with “The Laminator”.
+There are two benefits of the project in python is that it can easily be
+integrated in, for example, a stiffend plate buckling/cripling calculator.
+Or that it can be used to find the optimal layout by iterating over various
+designs.</p>
+<div class="topic">
+<p class="topic-title first">ToDo List</p>
+<ul class="simple">
+<li>Adding the homonigization module.</li>
+<li>Adding the inverse ply failure calculator for Tsai-Hill.</li>
+<li>Adding th buckling / cripling calculators.</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="abdCal.html">ABD Matrix Calculator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deformation.html">Deformation Calculator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="failure.html">Ply Failure Calculator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">MIT License</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-example">
+<span id="example"></span><h2>Example<a class="headerlink" href="#module-example" title="Permalink to this headline">¶</a></h2>
+<p>Example script for composits laminaties and their homoginization.</p>
+<p>This file calculates the properties of simple composit plates.
+The stacking sequence should be defined starting from the top of the laminate,
+which is the negative <span class="math notranslate nohighlight">\(z\)</span> direction.</p>
+<p>A.J.J. Lagerweij
+COHMAS Mechanical Engineering KAUST
+2020</p>
+<p>At the start of the file the required packages are needed. A minimum requirement
+is <cite>numpy</cite> and the different scripts related to this project</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># import packages</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># import local packages</span>
+<span class="kn">import</span> <span class="nn">abdCal</span>
+<span class="kn">import</span> <span class="nn">deformation</span>
+<span class="kn">import</span> <span class="nn">failure</span>
+</pre></div>
+</td></tr></table></div>
+<p>Currently one is required to define the ply parameters in the ply axis system.
+In the future this will be replaced by a script where a basic homonigization is
+performed on the constituants of each ply.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># Elastic properties</span>
+<span class="n">El</span> <span class="o">=</span> <span class="mi">142</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># MPa</span>
+<span class="n">Et</span> <span class="o">=</span> <span class="mi">13</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># MPa</span>
+<span class="n">G</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="mf">1e3</span>  <span class="c1"># MPa</span>
+<span class="n">nult</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># -</span>
+
+<span class="c1"># Failure properties</span>
+<span class="n">Xt</span> <span class="o">=</span> <span class="mi">2200</span>  <span class="c1"># MPa</span>
+<span class="n">Xc</span> <span class="o">=</span> <span class="mi">1850</span>  <span class="c1"># MPa</span>
+<span class="n">Yt</span> <span class="o">=</span> <span class="mi">55</span>  <span class="c1"># MPa</span>
+<span class="n">Yc</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># MPa</span>
+<span class="n">Smax</span> <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># MPa</span>
+
+<span class="c1"># Others</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mf">0.16</span>  <span class="c1"># mm</span>
+
+<span class="c1"># Calculate the ply stiffness matricess matrix</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="n">abdCal</span><span class="o">.</span><span class="n">QPlaneStress</span><span class="p">(</span><span class="n">El</span><span class="p">,</span> <span class="n">Et</span><span class="p">,</span> <span class="n">nult</span><span class="p">,</span> <span class="n">G</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Then the laminate properties musth be defined. Starting with the stacking
+sequence which consists of a list of the rotation angles of each ply (global to
+ply axis system) and a list with the thickness of each ply and the ply stiffness
+matrix <span class="math notranslate nohighlight">\(Q\)</span>. All list must be orderd from the top to the bottom of the
+laminate. Notice that the positive <span class="math notranslate nohighlight">\(z\)</span> direction is downward by standard
+convention.</p>
+<p>Afterwards the ply properties can be used to calculate the ABD matrix and its
+inverse.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>46
+47
+48
+49
+50
+51
+52
+53</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># Stacking sequence</span>
+<span class="n">angles_deg</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">thickness</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">angles_deg</span><span class="p">)</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="p">[</span><span class="n">Q</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">angles_deg</span><span class="p">)</span>
+
+<span class="c1"># Calculate the ABD matrix and its inverse</span>
+<span class="n">abd</span> <span class="o">=</span> <span class="n">abdCal</span><span class="o">.</span><span class="n">abd</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">angles_deg</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
+<span class="n">abd_inv</span> <span class="o">=</span> <span class="n">abdCal</span><span class="o">.</span><span class="n">abd_inverse</span><span class="p">(</span><span class="n">abd</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Now a load or deformation vector can be applied. Here the load vector was used.
+The load vector is a 1 by 3 numpy matrix consists of the running loads and
+moments in the form of <cite>(N_x, N_y, N_{xy}, M_x, M_y, M_{xy})^T</cite>.
+Similarly a deformation vector is defined as
+<span class="math notranslate nohighlight">\((\varepsilon_x, \varepsilon_y, \varepsilon_{xy},\kappa_x, \kappa_y, \kappa_{xy})^T\)</span>.
+Afterwards the resulting ply stresses and loads (in their local axis system)
+can be calculated. The strain and stress calculations are performed at the top
+and bottom of each ply. Detials can be found in the documentation of the
+deformation module.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>58
+59
+60
+61
+62
+63
+64
+65</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># Calculate the deformation caused by a given running load</span>
+<span class="n">NM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># MPa/mm and MPa*mm/mm</span>
+<span class="n">deformed</span> <span class="o">=</span> <span class="n">deformation</span><span class="o">.</span><span class="n">load_applied</span><span class="p">(</span><span class="n">abd_inv</span><span class="p">,</span> <span class="n">NM</span><span class="p">)</span>
+
+<span class="c1"># TODO: check sign convention after bending, positive vs negative</span>
+<span class="c1"># Calculate the stress in each layer caused by the running loads</span>
+<span class="n">strain</span> <span class="o">=</span> <span class="n">deformation</span><span class="o">.</span><span class="n">ply_strain</span><span class="p">(</span><span class="n">deformed</span><span class="p">,</span> <span class="n">angles_deg</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
+<span class="n">stress</span> <span class="o">=</span> <span class="n">deformation</span><span class="o">.</span><span class="n">ply_stress</span><span class="p">(</span><span class="n">deformed</span><span class="p">,</span> <span class="n">angles_deg</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">plotting</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Lastly the stresses are used to calculate if the failure criterias are
+violated. Here the the max stress, Tsai-Wu and Tsai-Hill criterias are used.
+It is reccomended that the user reads up on the differences between the possible
+criteria, all of them have their specific strength and weaknesses and are meant
+for their specif purpose. If one does not keep this in mind properly one will
+end up with flawed designs.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>71
+72
+73
+74</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># testing if the the criteria is violated</span>
+<span class="n">failure</span><span class="o">.</span><span class="n">max_stress</span><span class="p">(</span><span class="n">stress</span><span class="p">,</span> <span class="n">Xt</span><span class="p">,</span> <span class="n">Xc</span><span class="p">,</span> <span class="n">Yt</span><span class="p">,</span> <span class="n">Yc</span><span class="p">,</span> <span class="n">Smax</span><span class="p">)</span>
+<span class="n">failure</span><span class="o">.</span><span class="n">tsai_wu</span><span class="p">(</span><span class="n">stress</span><span class="p">,</span> <span class="n">Xt</span><span class="p">,</span> <span class="n">Xc</span><span class="p">,</span> <span class="n">Yt</span><span class="p">,</span> <span class="n">Yc</span><span class="p">,</span> <span class="n">Smax</span><span class="p">)</span>
+<span class="n">failure</span><span class="o">.</span><span class="n">tsai_hill</span><span class="p">(</span><span class="n">stress</span><span class="p">,</span> <span class="n">Xt</span><span class="p">,</span> <span class="n">Xc</span><span class="p">,</span> <span class="n">Yt</span><span class="p">,</span> <span class="n">Yc</span><span class="p">,</span> <span class="n">Smax</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and Tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Lamination Theory Calculator</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#module-example">Example</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and Tables</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="abdCal.html"
+                        title="next chapter">ABD Matrix Calculator</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="abdCal.html" title="ABD Matrix Calculator"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Classical Laminate Theory Calculator 0.0.9 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, A.J.J. Lagerweij.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+    </div>
+  </body>
+</html>
