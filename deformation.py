@@ -92,7 +92,7 @@ def ply_strain(deformed, angles, thickness, Q):
     # Setting up a list for the output
     strain = []
 
-    # iterate over all ply's
+    # iterate over all plies
     for i in range(len(thickness)):
         # Calculating z coordinates around the ply
         z_top = np.sum(thickness[:i]) - h
@@ -161,7 +161,7 @@ def ply_stress(deformed, angles, thickness, Q, plotting=False):
         sigma_yy = []
         tau_xy = []
 
-    # iterate over all ply's
+    # iterate over all plies
     for i in range(len(thickness)):
         # Rotating strain from global to ply axis sytstem
         strain_lt_top = strain[i][0]
