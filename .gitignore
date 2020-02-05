@@ -8,6 +8,7 @@ __pycache__/
 
 # the documentation bulid
 docs/source/_build
+docs/build
 
 # Distribution / packaging
 .Python
