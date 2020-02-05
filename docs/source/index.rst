@@ -1,5 +1,5 @@
 ****************************
-Lamination Theory Calculator
+Laminate Theory Calculator
 ****************************
 
 Introduction
@@ -12,7 +12,14 @@ integrated in, for example, a stiffend plate buckling/cripling calculator.
 Or that it can be used to find the optimal layout by iterating over various
 designs.
 
-.. topic:: ToDo List
+Before using the code I recommend to read upon literature introducing the
+Classical Laminate Theory. Many such books exist, from my experience the
+following where reccomended:
+
+- Design and Analysis of Composite Structures: With Applications to Aerospace Structures by Christos Kassapoglou (ISBN: 9781118536933, DOI: `10.1002/9781118536933 <https://doi.org/10.1002/9781118536933>`_)
+- Composite Materials: Design and Applications by Daniel Gay (ISBN: 9780429101038 DOI: `10.1201/b17106 <https://doi.org/10.1201/b17106>`_)
+
+.. note:: TODO
 
 	- Adding the homonigization module.
 	- Adding the inverse ply failure calculator for Tsai-Hill.
