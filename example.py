@@ -74,3 +74,4 @@ stress = deformation.ply_stress(deformed, angles_deg, thickness, Q, plotting=Tru
 failure.max_stress(stress, Xt, Xc, Yt, Yc, Smax)
 failure.tsai_wu(stress, Xt, Xc, Yt, Yc, Smax)
 failure.tsai_hill(stress, Xt, Xc, Yt, Yc, Smax)
+

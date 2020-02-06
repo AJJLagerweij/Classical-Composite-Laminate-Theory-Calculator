@@ -37,7 +37,7 @@ following where reccomended:
 
 Example
 =======
-.. automodule:: example
+The example disscussed below is formed by snipplets of `example.py <https://github.com/AJJLagerweij/Classical-Composite-Laminate-Theory-Calculator/blob/master/example.py>`_.
 
 At the start of the file the required packages are needed. A minimum requirement
 is `numpy` and the different scripts related to this project
@@ -53,22 +53,21 @@ performed on the constituants of each ply.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 24-41
+   :lines: 25-42
    :lineno-match:
 
 Then the laminate properties musth be defined. Starting with the stacking
 sequence which consists of a list of the rotation angles of each ply (global to
 ply axis system) and a list with the thickness of each ply and the ply stiffness
 matrix :math:`Q`. All list must be orderd from the top to the bottom of the
-laminate. Notice that the positive :math:`z` direction is downward by standard
-convention.
+laminate. Notice that the positive :math:`z` direction is downward by convention.
 
 Afterwards the ply properties can be used to calculate the ABD matrix and its
 inverse.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 46-53
+   :lines: 48-55
    :lineno-match:
 
 Now a load or deformation vector can be applied. Here the load vector was used.
@@ -83,7 +82,7 @@ deformation module.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 58-65
+   :lines: 61-67
    :lineno-match:
 
 Lastly the stresses are used to calculate if the failure criterias are
@@ -95,7 +94,7 @@ end up with flawed designs.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 71-74
+   :lines: 73-76
    :lineno-match:
 
 Indices and Tables
