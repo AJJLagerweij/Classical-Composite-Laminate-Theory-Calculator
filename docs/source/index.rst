@@ -21,7 +21,7 @@ following where reccomended:
 
 .. note:: TODO
 
-	- Adding the homonigization module.
+	- Adding functions to the homonigization module.
 	- Adding the inverse ply failure calculator for Tsai-Hill.
 	- Adding th buckling / cripling calculators.
 
@@ -29,6 +29,7 @@ following where reccomended:
    :caption: Table of Contents
    :maxdepth: 1
 
+   homogenization
    abdcal
    deformation
    failure
