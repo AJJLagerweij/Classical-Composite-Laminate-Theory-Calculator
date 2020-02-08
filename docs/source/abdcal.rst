@@ -13,7 +13,7 @@ and it can execute a given stacking sequence to calculate the ADB matrix.
 
 Routines
 ========
-.. automodule:: abdCal
+.. automodule:: abdcal
    :members:
 
 Indices and Tables

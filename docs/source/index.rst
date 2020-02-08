@@ -29,7 +29,7 @@ following where reccomended:
    :caption: Table of Contents
    :maxdepth: 1
 
-   abdCal
+   abdcal
    deformation
    failure
    license
@@ -53,7 +53,7 @@ performed on the constituants of each ply.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 25-42
+   :lines: 26-43
    :lineno-match:
 
 Then the laminate properties musth be defined. Starting with the stacking
@@ -67,7 +67,7 @@ inverse.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 48-55
+   :lines: 49-56
    :lineno-match:
 
 Now a load or deformation vector can be applied. Here the load vector was used.
@@ -82,7 +82,7 @@ deformation module.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 61-67
+   :lines: 62-68
    :lineno-match:
 
 Lastly the stresses are used to calculate if the failure criterias are
@@ -94,7 +94,7 @@ end up with flawed designs.
 
 .. literalinclude:: /../../example.py
    :language: python
-   :lines: 73-76
+   :lines: 74-77
    :lineno-match:
 
 Indices and Tables
