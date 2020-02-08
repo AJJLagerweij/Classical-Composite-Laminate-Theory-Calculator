@@ -127,6 +127,10 @@ def ply_stress(deformed, angles, thickness, Q, plotting=False):
     leed to different stresses depending on the :math:`z` location in the ply.
     Top plies should be listed first in the lists of Q, angles and thickness.
 
+    If required the stresses can be plotted as a function of the :math:`z`
+    coordinates. In this plot the stresses shown are in the global axsis
+    system :math:`x` and :math:`y`.
+
     Parameters
     ----------
     deformed : vector
@@ -161,29 +165,35 @@ def ply_stress(deformed, angles, thickness, Q, plotting=False):
         sigma_yy = []
         tau_xy = []
 
-    # iterate over all plies
+    # Iterate over all plies.
     for i in range(len(thickness)):
-        # Rotating strain from global to ply axis sytstem
+        # Obtain the strains from this ply.
         strain_lt_top = strain[i][0]
         strain_lt_bot = strain[i][1]
 
-        # Now this is converted into stress
+        # Convert strains into stresses.
         stress_lt_top = Q[i].dot(strain_lt_top)
         stress_lt_bot = Q[i].dot(strain_lt_bot)
 
-        # store the stress and z coordinate results
+        # Store the stress values of this ply.
         stress_ply = [stress_lt_top, stress_lt_bot]
         stress.append(stress_ply)
 
-        # for the plotting
+        # Add the coordinates and stresses of this ply to plotting lists.
         if plotting is True:
+            # Calculate the z coordinates of the top and bottom of the ply.
             z_top = np.sum(thickness[:i]) - h
             z_bot = np.sum(thickness[:i+1]) - h
             z += [z_top, z_bot]
-            sigma_xx += [stress_lt_top.item(0), stress_lt_bot.item(0)]
-            sigma_yy += [stress_lt_top.item(1), stress_lt_bot.item(1)]
-            tau_xy += [stress_lt_top.item(2), stress_lt_bot.item(2)]
 
+            # Rotate the stresses to the global axis system.
+            stress_xy_top = stress_rotation(stress_lt_top, angles[i])
+            stress_xy_bot = stress_rotation(stress_lt_bot, angles[i])
+            sigma_xx += [stress_xy_top.item(0), stress_xy_bot.item(0)]
+            sigma_yy += [stress_xy_top.item(1), stress_xy_bot.item(1)]
+            tau_xy += [stress_xy_top.item(2), stress_xy_bot.item(2)]
+
+    # Plot the stresses through the laminate thickness if requested.
     if plotting is True:
         plt.subplot(1, 3, 1)
         plt.plot(sigma_xx, z)
