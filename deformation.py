@@ -6,12 +6,12 @@ COHMAS Mechanical Engineering KAUST
 2020
 """
 
-# Importing packages
+# Import external packages.
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-# Calculating the strain in the plate and curvature (Kirchhoff plate theory)
+# Calculate the strain in the plate and curvature (Kirchhoff plate theory).
 def load_applied(abd_inv, load):
     r"""
     Calculate the strain and curvature of the full plate under a given load using Kirchhoff plate theory.
@@ -33,7 +33,7 @@ def load_applied(abd_inv, load):
     return deformation
 
 
-# Calculating the running force & moment on the plate (Kirchhoff plate theory)
+# Calculate the running force & moment on the plate (Kirchhoff plate theory).
 def deformation_applied(abd, deformation):
     r"""
     Calculate the running load and moment of the plate under a given using Kichhoff plate theory.
@@ -55,7 +55,7 @@ def deformation_applied(abd, deformation):
     return load
 
 
-# Calculate the strain in each ply
+# Calculate the strain in each ply.
 def ply_strain(deformed, angles, thickness, Q):
     r"""
     Calculate the strain at the top and bottom of each ply.
@@ -86,38 +86,38 @@ def ply_strain(deformed, angles, thickness, Q):
         The stress vector :math:`(\sigma_{xx}, \sigma_{yy}, \tau_{xy})^T` of
         the top, middle and bottom of each ply in the laminate.
     """
-    # Calculating total thickness
+    # Calculating total thickness of the layup.
     h = np.sum(thickness) / 2
 
-    # Setting up a list for the output
+    # Create a list for the strains in each ply.
     strain = []
 
-    # iterate over all plies
+    # Iterate over all plies.
     for i in range(len(thickness)):
-        # Calculating z coordinates around the ply
+        # Calculate the z coordinates of the top and bottom of the ply.
         z_top = np.sum(thickness[:i]) - h
         z_bot = np.sum(thickness[:i+1]) - h
 
-        # Deformation of the midplane of the plate
+        # Calculate deformation of the midplane of the laminate.
         strain_membrane = deformed[:3, 0]
         curvature = deformed[3:, 0]
 
-        # Caluclate strain in plies
+        # Caluclate strain in the ply.
         strain_top = strain_membrane + z_top * curvature
         strain_bot = strain_membrane + z_bot * curvature
 
-        # Rotating strain from global to ply axis sytstem
+        # Rotate strain from global to ply axis sytstem.
         strain_lt_top = strain_rotation(strain_top, -angles[i])
         strain_lt_bot = strain_rotation(strain_bot, -angles[i])
 
-        # Store the stress and z coordinate results
+        # Store the strain values of this ply.
         strain_ply = [strain_lt_top, strain_lt_bot]
         strain.append(strain_ply)
 
     return strain
 
 
-# Calculate the stress in each ply
+# Calculate the stress in each ply.
 def ply_stress(deformed, angles, thickness, Q, plotting=False):
     r"""
     Calculate the stresses at the top and bottom of each ply.
@@ -147,13 +147,13 @@ def ply_stress(deformed, angles, thickness, Q, plotting=False):
         The stress vector :math:`(\sigma_{xx}, \sigma_{yy}, \tau_{xy})^T` of
         the top, middle and bottom of each ply in the laminate.
     """
-    # Calculating the strain in local ply axes system
+    # Calculate the strain in local ply axes system.
     strain = ply_strain(deformed, angles, thickness, Q)
 
-    # Setting up a list for the output
+    # Create a list for the stresses in each ply.
     stress = []
 
-    # empty stress list for when plotting is required
+    # Create an empty list of z coordinates and stresss for the plotting.
     if plotting is True:
         h = np.sum(thickness)/2
         z = []
@@ -213,7 +213,7 @@ def ply_stress(deformed, angles, thickness, Q, plotting=False):
     return stress
 
 
-# Stress vertor rotation
+# Rotate stress vertor over given angle.
 def stress_rotation(stress, angle):
     """
     Rotates a stress vector over a given angle.
@@ -242,7 +242,7 @@ def stress_rotation(stress, angle):
     return stress_rot
 
 
-# Strain vertor rotation
+# Rotate strain vector over given angle.
 def strain_rotation(strain, angle):
     """
     Rotates a strain vector over a given angle.

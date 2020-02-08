@@ -9,11 +9,11 @@ COHMAS Mechanical Engineering KAUST
 2020
 """
 
-# importing packages
+# Import external packages.
 import numpy as np
 
 
-# Q matrix of Plain stress case
+# Determine the stiffness matrix for an in plane stress ply.
 def QPlaneStress(El, Et, nult, G):
     r"""
     Generate the plane stress local stiffness matrix.
@@ -41,7 +41,7 @@ def QPlaneStress(El, Et, nult, G):
     return Q
 
 
-# plain strain local sitffness calculator
+# Determine the stiffness matrix for an in plane strain ply.
 def QPlaneStrain(El, Et, nult, G):
     r"""
     Generate the plane strain local stiffness matrix.
@@ -71,7 +71,7 @@ def QPlaneStrain(El, Et, nult, G):
     return 0
 
 
-# Stiffness matrix rotation
+# Rotate the stiffness matrix over a given angle.
 def striffness_rotation(stiffness, angle):
     r"""
     Rotate the stiffness matrix over a given angle.
@@ -101,7 +101,7 @@ def striffness_rotation(stiffness, angle):
     return stiffness_rot
 
 
-# Compliance matrix rotation
+# Rotate the compliance matrix over a given angle.
 def compliance_rotation(compliance, angle):
     r"""
     Rotate the compliance matrix over a given angle.
@@ -131,7 +131,7 @@ def compliance_rotation(compliance, angle):
     return compliance_rot
 
 
-# Thin laminate stiffness calculator
+# Calculate the stiffness matrix of a thin (no benbing) laminate.
 def abdthin(Q, angles, thickness):
     r"""
     ABD matrix calculator for a thin laminate.
@@ -154,18 +154,20 @@ def abdthin(Q, angles, thickness):
     C : matrix
         The stiffness matrix of the thin laminate.
     """
-    # Set up an empty stiffness matrix
+    # Create an empty stiffness matrix.
     C = np.zeros((3, 3))
 
+    # Loop over all plies.
     for i in range(len(angles)):
         Q_bar = striffness_rotation(Q[i], angles[i]) * thickness[i]
         C += Q_bar
 
+    # Go from the stresses to running loads.
     C = np.matrix(C/(np.sum(thickness)))
     return C
 
 
-# ABD matrix calculator (Kousious method)
+# Calculate the ABD matrix of a given laminate.
 def abd(Q, angles, thickness):
     r"""
     Calculate the full ABD matrix of a laminate.
@@ -186,7 +188,7 @@ def abd(Q, angles, thickness):
     ABD : matrix
         The stiffness matrix of the thin laminate.
     """
-    # Check if arrays match
+    # Check if the size of the input lists are equal.
     if len(angles) != len(thickness) != len(Q):
         error_message = 'Error occeured, imput arrays not same length' + \
                         'length angle list = ' + len(angles) + \
@@ -194,32 +196,34 @@ def abd(Q, angles, thickness):
                         'length ply stiffness matrix list = ', + len(Q)
         raise ValueError(error_message)
 
-    # Calculating total thickness
+    # Calculate the total thickness.
     h = np.sum(thickness) / 2
 
-    # Now set up empty matricces for A B en D
+    # Create empty matricces for A B en D.
     A = np.zeros((3, 3))
     B = np.zeros((3, 3))
     D = np.zeros((3, 3))
 
+    # Loop over all plies
     for i in range(len(angles)):
-        # Calculating z coordinates around the ply
+        # Calculate the z coordinates of the top and bottom of the ply.
         z_top = np.sum(thickness[:i]) - h
         z_bot = np.sum(thickness[:i+1]) - h
 
-        # Setting up rotation of the local stiffenss matrix
+        # Rotate the local stiffenss matrix.
         Q_bar = striffness_rotation(Q[i], angles[i])
 
-        # Now calculating the A, B and D parts of this layer
+        # Calculate the contribution to the A, B and D matrix of this layer.
         Ai = Q_bar * (z_bot - z_top)
         Bi = 1/2 * Q_bar * (z_bot**2 - z_top**2)
         Di = 1/3 * Q_bar * (z_bot**3 - z_top**3)
 
-        # Now summing this layer to the previous ones
+        # Summ this layer to the previous ones.
         A = A + Ai
         B = B + Bi
         D = D + Di
 
+    # Compile the entirety of the ABD matrix.
     ABD = np.matrix([[A[0, 0], A[0, 1], A[0, 2], B[0, 0], B[0, 1], B[0, 2]],
                      [A[1, 0], A[1, 1], A[1, 2], B[1, 0], B[1, 1], B[1, 2]],
                      [A[2, 0], A[2, 1], A[2, 2], B[2, 0], B[2, 1], B[2, 2]],
@@ -230,7 +234,7 @@ def abd(Q, angles, thickness):
     return ABD
 
 
-# abd matrix calculator
+# Invert the ABD matrix.
 def abd_inverse(ABD):
     r"""
     Invert a ABD matrix.
@@ -245,9 +249,12 @@ def abd_inverse(ABD):
     abd : matrix
         abd matrix is inverse of ABD, aka (e) = [abd](N)
     """
+    # Check if this ABD matrix is invertible.
     if np.linalg.det(ABD) == 0:
         error_message = 'Determinant is equal to zero inverting not posible'
         raise ValueError(error_message)
 
+    # Invert the matrix.
     abd = np.linalg.inv(ABD)
+
     return abd
