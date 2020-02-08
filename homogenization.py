@@ -70,6 +70,10 @@ def rule_of_mixtures(prop_f, prop_m, vol_f):
     This upper limite of the rule of mixtures is generaly used for the
     longitudional stiffness :math:`E_l`.
 
+    .. warning::
+        Not yet implemented.
+        It raises a `NotImplementedError`.
+
     Parameters
     ----------
     prop_f : float
@@ -84,6 +88,7 @@ def rule_of_mixtures(prop_f, prop_m, vol_f):
     prop : float
         The property of the mixed material.
     """
+    raise NotImplementedError(
+        'rule_of_mixtures is undefined. It will be added in the future.')
     prop = False
-
     return prop
