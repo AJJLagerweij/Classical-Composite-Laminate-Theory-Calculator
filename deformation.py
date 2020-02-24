@@ -223,6 +223,56 @@ def ply_stress(deformed, Q, angles, thickness, plotting=False):
     return stress
 
 
+# Calculate stress caused by thermal  strains.
+def ply_stress_thermal(deformed, angles, Q, thickness, alpha, dT):
+    r"""
+    Calculate the stress due to mechanical and thermal deformation.
+
+    Parameters
+    ----------
+    deformed : vector
+        This deformation of the entire laminate. :math:`(\varepsilon_x,
+        \varepsilon_y, \varepsilon_{xy},\kappa_x, \kappa_y, \kappa_{xy})^T`
+    Q : list
+        The local stiffness matrix of each ply in l-t axis system.
+    angles : list
+        The rotation of each ply in degrees.
+    thickness : list
+        The thickness of each ply.
+    alpha : list
+        The coeficcient of termal expansion of each ply in l-t axis system.
+    dT : float
+        Change in temperature.
+
+    Returns
+    -------
+    stress : list
+        The stress vector :math:`(\sigma_{xx}, \sigma_{yy}, \tau_{xy})^T` of
+        the top, middle and bottom of each ply in the laminate.
+    """
+    # Calculate the strain in local ply axes system.
+    strain = ply_strain(deformed, Q, angles, thickness)
+
+    # Create a list for the stresses in each ply.
+    stress = []
+
+    # Iterate over all plies.
+    for i in range(len(thickness)):
+        # Obtain the strains in this ply including the termal terms.
+        strain_lt_top = strain[i][0] - dT * alpha[i]
+        strain_lt_bot = strain[i][1] - dT * alpha[i]
+
+        # Convert strains into stresses.
+        stress_lt_top = Q[i].dot(strain_lt_top)
+        stress_lt_bot = Q[i].dot(strain_lt_bot)
+
+        # Store the stress values of this ply.
+        stress_ply = [stress_lt_top, stress_lt_bot]
+        stress.append(stress_ply)
+
+    return stress
+
+
 # Rotate stress vertor over given angle.
 def stress_rotation(stress, angle):
     """
