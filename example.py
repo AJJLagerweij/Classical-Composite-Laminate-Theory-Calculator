@@ -64,8 +64,8 @@ NM = np.matrix([0, 1, 0, 1, 0, 0]).T  # MPa/mm and MPa*mm/mm
 deformed = deformation.load_applied(abd_inv, NM)
 
 # Calculate the stress in each layer caused by the running loads.
-strain = deformation.ply_strain(deformed, angles_deg, thickness, Q)
-stress = deformation.ply_stress(deformed, angles_deg, thickness, Q, plotting=True)
+strain = deformation.ply_strain(deformed, Q, angles_deg, thickness)
+stress = deformation.ply_stress(deformed, Q, angles_deg, thickness, plotting=True)
 
 
 ###############################################################################
