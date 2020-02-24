@@ -188,16 +188,8 @@ def abd(Q, angles, thickness):
     ABD : matrix
         The stiffness matrix of the thin laminate.
     """
-    # Check if the size of the input lists are equal.
-    if len(angles) != len(thickness) != len(Q):
-        error_message = 'Error occeured, imput arrays not same length' + \
-                        'length angle list = ' + len(angles) + \
-                        'length thickness list = ' + len(thickness) + \
-                        'length ply stiffness matrix list = ', + len(Q)
-        raise ValueError(error_message)
-
     # Calculate the total thickness.
-    h = np.sum(thickness) / 2
+    h = sum(thickness) / 2
 
     # Create empty matricces for A B en D.
     A = np.zeros((3, 3))
@@ -231,30 +223,135 @@ def abd(Q, angles, thickness):
                      [B[1, 0], B[1, 1], B[1, 2], D[1, 0], D[1, 1], D[1, 2]],
                      [B[2, 0], B[2, 1], B[2, 2], D[2, 0], D[2, 1], D[2, 2]]])
 
+    # Truncate very small values.
+    ABD = np.where(np.abs(ABD) < np.max(ABD)*1e-6, 0, ABD)
     return ABD
 
 
-# Invert the ABD matrix.
-def abd_inverse(ABD):
+# Calculate the global coefficent of thermal expansion of a thin laminate.
+def ctethin(Q, angles, thickness, alpha):
     r"""
-    Invert a ABD matrix.
+    Thin laminate Coefficient of Thermal Expansion calculator.
+
+    This funcion calculates the CTE in the x-y axis sytem. It summs up the
+    rotated CTE of each layer and weights them by layer stiffness and
+    thickness. Here it is assumed that there is no bending behaviour this is
+    only true for thin and symmetric layups.
+    Top plies should be listed first in the lists of Q, angles, thickness and
+    alpha.
 
     Parameters
     ----------
-    ABD : matrix
-        ABD matrix from system (N) = [ABD](e).
+    Q : list
+        The stiffness matrix of each ply in its l-t axis system.
+    angles : list
+        The rotation of each ply in degrees.
+    thickness : list
+        The thickness of each ply.
+    alpha : list
+        The coeficcient of termal expansion of each ply in l-t axis system.
 
     Returns
     -------
-    abd : matrix
-        abd matrix is inverse of ABD, aka (e) = [abd](N)
+    cte : vector
+        The coefficient of termal expansion of the laminate, in x-y axis sytem.
+    """
+    # Calculate the laminate compliance matrix.
+    C = abdthin(Q, angles, thickness)
+    S = matrix_inverse(C)
+
+    # Create an empty CTE vector.
+    cte = np.zeros((3, 1))
+
+    # Loop ver all plies.
+    for i in range(len(angles)):
+        alpha_bar = deformation.strain_rotation(alpha[i], angles[i])
+        Q_bar = stiffness_rotation(Q[i], angles[i])
+        cte += Q_bar * alpha_bar * thickness[i]
+
+    # Normalize the cte to be in strain per temperature unit.
+    cte = cte / sum(thickness)
+    cte = S * cte
+    return cte
+
+
+# Calculate the global coefficent of thermal expansion.
+def cte(Q, angles, thickness, alpha):
+    r"""
+    Coefficient of Thermal Expansion calculator.
+
+    This funcion calculates the CTE in the x-y axis sytem. It summs up the
+    rotated CTE of each layer and multiplies them by layer stiffness and
+    thickness. The resulting CTE relates thermal change (:math:`\Delta T`) to
+    the deformation vector (strains and curvatures).
+    Top plies should be listed first in the lists of Q, angles,
+    thickness and alpha.
+
+    Parameters
+    ----------
+    Q : list
+        The stiffness matrix of each ply in its l-t axis system.
+    angles : list
+        The rotation of each ply in degrees.
+    thickness : list
+        The thickness of each ply.
+    alpha : list
+        The coeficcient of termal expansion of each ply in l-t axis system.
+
+    Returns
+    -------
+    cte : vector
+        The coefficient of termal expansion of the laminate, in x-y axis sytem.
+    """
+    # Calculate the total thickness.
+    h = sum(thickness) / 2
+
+    # Create an empty cte * stiffness vector vector.
+    alphaEt = np.zeros((6, 1))
+
+    # Loop ver all plies.
+    for i in range(len(angles)):
+        # Calculate the z coordinates of the top and bottom of the ply.
+        z_top = np.sum(thickness[:i]) - h
+        z_bot = np.sum(thickness[:i+1]) - h
+
+        # rotate the ply cte and Q f
+        alpha_bar = deformation.strain_rotation(alpha[i], angles[i])
+        Q_bar = stiffness_rotation(Q[i], angles[i])
+
+        # Calculate the contribution if this ply to the total thermal load.
+        alphaEt[:3] += Q_bar * alpha_bar * (z_bot - z_top)
+        alphaEt[3:] += 1/2 * Q_bar * alpha_bar * (z_bot**2 - z_top**2)
+
+    # Convert alphaEt which links Delta T and running loads to strain and
+    # curvature.
+    ABD = abd(Q, angles, thickness)
+    ABD_inv = matrix_inverse(ABD)
+    cte = deformation.load_applied(ABD_inv, alphaEt)  # stren per unit change T
+
+    return cte
+
+
+# Invert the matrix.
+def matrix_inverse(matrix):
+    r"""
+    Inverts a matrix.
+
+    Parameters
+    ----------
+    matrix : matrix
+        The matrix to be inverted.
+
+    Returns
+    -------
+    inverse : matrix
+        The inverse of the matrix.
     """
     # Check if this ABD matrix is invertible.
-    if np.linalg.det(ABD) == 0:
+    if np.linalg.det(matrix) == 0:
         error_message = 'Determinant is equal to zero inverting not posible'
         raise ValueError(error_message)
 
     # Invert the matrix.
-    abd = np.linalg.inv(ABD)
-
-    return abd
+    inverse = np.linalg.inv(matrix)
+    return inverse
