@@ -72,7 +72,7 @@ def QPlaneStrain(El, Et, nult, G):
 
 
 # Rotate the stiffness matrix over a given angle.
-def striffness_rotation(stiffness, angle):
+def stiffness_rotation(stiffness, angle):
     r"""
     Rotate the stiffness matrix over a given angle.
 
@@ -211,7 +211,7 @@ def abd(Q, angles, thickness):
         z_bot = np.sum(thickness[:i+1]) - h
 
         # Rotate the local stiffenss matrix.
-        Q_bar = striffness_rotation(Q[i], angles[i])
+        Q_bar = stiffness_rotation(Q[i], angles[i])
 
         # Calculate the contribution to the A, B and D matrix of this layer.
         Ai = Q_bar * (z_bot - z_top)
