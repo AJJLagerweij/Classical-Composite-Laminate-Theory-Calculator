@@ -107,8 +107,8 @@ def ply_strain(deformed, Q, angles, thickness):
         strain_bot = strain_membrane + z_bot * curvature
 
         # Rotate strain from global to ply axis sytstem.
-        strain_lt_top = strain_rotation(strain_top, angles[i])
-        strain_lt_bot = strain_rotation(strain_bot, angles[i])
+        strain_lt_top = strain_rotation(strain_top, -angles[i])
+        strain_lt_bot = strain_rotation(strain_bot, -angles[i])
 
         # Store the strain values of this ply.
         strain_ply = [strain_lt_top, strain_lt_bot]
@@ -276,8 +276,10 @@ def ply_stress_thermal(deformed, angles, Q, thickness, alpha, dT):
 # Rotate stress vertor over given angle.
 def stress_rotation(stress, angle):
     """
-    Rotates a stress vector over a given angle.
+    Rotates a stress vector against a given angle.
 
+    This rotates the stress from local to the global axis sytem.
+    Use a negative angle to rotate from global to local system.
     The stress vector must be in Voigt notation and engineering stress is used.
 
     Parameters
@@ -305,8 +307,10 @@ def stress_rotation(stress, angle):
 # Rotate strain vector over given angle.
 def strain_rotation(strain, angle):
     """
-    Rotates a strain vector over a given angle.
+    Rotates a strain vector against a given angle.
 
+    This rotates the strain from local to the global axis sytem.
+    Use a negative angle to rotate from global to local system.
     The strain vector must be in Voigt notation and engineering strain is used.
 
     Parameters

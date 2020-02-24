@@ -78,6 +78,7 @@ def stiffness_rotation(stiffness, angle):
     Rotate the stiffness matrix against given angle.
 
     This rotates the stiffness matrix from local to the global axis sytem.
+    Use a negative angle to rotate from global to local system.
 
     Parameters
     ----------
@@ -109,7 +110,8 @@ def compliance_rotation(compliance, angle):
     r"""
     Rotate the compliance matrix over a given angle.
 
-    This rotates the compliance matrix from local to the global axis sytem.
+    This rotates the complianc matrix from local to the global axis sytem.
+    Use a negative angle to rotate from global to local system.
 
     Parameters
     ----------
