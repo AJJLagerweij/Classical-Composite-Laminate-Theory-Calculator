@@ -56,7 +56,7 @@ def deformation_applied(abd, deformation):
 
 
 # Calculate the strain in each ply.
-def ply_strain(deformed, angles, thickness, Q):
+def ply_strain(deformed, Q, angles, thickness):
     r"""
     Calculate the strain at the top and bottom of each ply.
 
@@ -71,12 +71,12 @@ def ply_strain(deformed, angles, thickness, Q):
     deformed : vector
         This deformation consists of :math:`(\varepsilon_x, \varepsilon_y
         \varepsilon_{xy},\kappa_x, \kappa_y, \kappa_{xy})^T`
+    Q : list
+        The local stiffness matrix of each ply.
     angles : list
         The rotation of each ply in degrees.
     thickness : list
         The thickness of each ply.
-    Q : list
-        The local stiffness matrix of each ply.
     plotting : bool, optional
         Plotting the stress distribution or not.
 
@@ -118,7 +118,7 @@ def ply_strain(deformed, angles, thickness, Q):
 
 
 # Calculate the stress in each ply.
-def ply_stress(deformed, angles, thickness, Q, plotting=False):
+def ply_stress(deformed, Q, angles, thickness, plotting=False):
     r"""
     Calculate the stresses at the top and bottom of each ply.
 
