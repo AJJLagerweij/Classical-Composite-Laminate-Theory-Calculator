@@ -75,7 +75,9 @@ def QPlaneStrain(El, Et, nult, G):
 # Rotate the stiffness matrix over a given angle.
 def stiffness_rotation(stiffness, angle):
     r"""
-    Rotate the stiffness matrix over a given angle.
+    Rotate the stiffness matrix against given angle.
+
+    This rotates the stiffness matrix from local to the global axis sytem.
 
     Parameters
     ----------
@@ -106,6 +108,8 @@ def stiffness_rotation(stiffness, angle):
 def compliance_rotation(compliance, angle):
     r"""
     Rotate the compliance matrix over a given angle.
+
+    This rotates the compliance matrix from local to the global axis sytem.
 
     Parameters
     ----------

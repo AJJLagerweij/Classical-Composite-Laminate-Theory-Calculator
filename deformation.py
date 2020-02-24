@@ -293,12 +293,12 @@ def stress_rotation(stress, angle):
         A rotated version of the matrix.
     """
     angle = angle * np.pi/180  # convert to radians
-    m = np.cos(angle)
-    n = np.sin(angle)
-    T1 = np.matrix([[m**2, n**2, 2*m*n],
-                    [n**2, m**2, -2*m*n],
-                    [-m*n, m*n, m**2-n**2]])
-    stress_rot = T1 * stress
+    m = np.cos(-angle)
+    n = np.sin(-angle)
+    T1_inv = np.matrix([[m**2, n**2, 2*m*n],
+                        [n**2, m**2, -2*m*n],
+                        [-m*n, m*n, m**2-n**2]])
+    stress_rot = T1_inv * stress
     return stress_rot
 
 
@@ -322,10 +322,10 @@ def strain_rotation(strain, angle):
         A rotated version of the matrix.
     """
     angle = angle * np.pi/180  # convert to radians
-    m = np.cos(angle)
-    n = np.sin(angle)
-    T2 = np.matrix([[m**2, n**2, m*n],
-                    [n**2, m**2, -m*n],
-                    [-2*m*n, 2*m*n, m**2-n**2]])
-    strain_rot = T2 * strain
+    m = np.cos(-angle)
+    n = np.sin(-angle)
+    T2_inv = np.matrix([[m**2, n**2, m*n],
+                        [n**2, m**2, -m*n],
+                        [-2*m*n, 2*m*n, m**2-n**2]])
+    strain_rot = T2_inv * strain
     return strain_rot
