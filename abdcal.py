@@ -11,6 +11,7 @@ COHMAS Mechanical Engineering KAUST
 
 # Import external packages.
 import numpy as np
+import deformation
 
 
 # Determine the stiffness matrix for an in plane stress ply.
@@ -131,14 +132,15 @@ def compliance_rotation(compliance, angle):
     return compliance_rot
 
 
-# Calculate the stiffness matrix of a thin (no benbing) laminate.
+# Calculate the stiffness matrix of a thin (no bending) laminate.
 def abdthin(Q, angles, thickness):
     r"""
     ABD matrix calculator for a thin laminate.
 
     In the thin laminate theroy it is assumed that the out of plane stiffness
-    is negligible. Hence only the membrane (A part) of the ABD matrix remains.
-    Top plies should be listed first in the lists of Q, angles and thickness.
+    is negligible and that the layup is symmetric. Hence only the membrane
+    (A part) of the ABD matrix remains. Top plies should be listed first in the
+    lists of Q, angles and thickness.
 
     Parameters
     ----------
@@ -159,11 +161,14 @@ def abdthin(Q, angles, thickness):
 
     # Loop over all plies.
     for i in range(len(angles)):
-        Q_bar = striffness_rotation(Q[i], angles[i]) * thickness[i]
-        C += Q_bar
+        Q_bar = stiffness_rotation(Q[i], angles[i])
+        C += Q_bar * thickness[i]
 
-    # Go from the stresses to running loads.
-    C = np.matrix(C/(np.sum(thickness)))
+    # Go from the stresses * length^2 to running loads.
+    C = np.matrix(C) / np.sum(thickness)
+
+    # Truncate very small values.
+    C = np.where(np.abs(C) < np.max(C)*1e-6, 0, C)
     return C
 
 

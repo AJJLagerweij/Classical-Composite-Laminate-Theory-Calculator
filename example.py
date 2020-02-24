@@ -47,13 +47,13 @@ Q = abdcal.QPlaneStress(El, Et, nult, G)
 # Laminate Properites                                                         #
 ###############################################################################
 # Define the stacking sequence.
-angles_deg = [0, 90, 90, 0]
+angles_deg = [0, 0, 45, 90, -45, -45, 90, 45, 0, 0]
 thickness = [t] * len(angles_deg)
 Q = [Q] * len(angles_deg)
 
 # Calculate the ABD matrix and its inverse.
 abd = abdcal.abd(Q, angles_deg, thickness)
-abd_inv = abdcal.abd_inverse(abd)
+abd_inv = abdcal.matrix_inverse(abd)
 
 
 ###############################################################################

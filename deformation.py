@@ -99,16 +99,16 @@ def ply_strain(deformed, Q, angles, thickness):
         z_bot = np.sum(thickness[:i+1]) - h
 
         # Calculate deformation of the midplane of the laminate.
-        strain_membrane = deformed[:3, 0]
-        curvature = deformed[3:, 0]
+        strain_membrane = deformed[:3]
+        curvature = deformed[3:]
 
         # Caluclate strain in the ply.
         strain_top = strain_membrane + z_top * curvature
         strain_bot = strain_membrane + z_bot * curvature
 
         # Rotate strain from global to ply axis sytstem.
-        strain_lt_top = strain_rotation(strain_top, -angles[i])
-        strain_lt_bot = strain_rotation(strain_bot, -angles[i])
+        strain_lt_top = strain_rotation(strain_top, angles[i])
+        strain_lt_bot = strain_rotation(strain_bot, angles[i])
 
         # Store the strain values of this ply.
         strain_ply = [strain_lt_top, strain_lt_bot]
@@ -136,12 +136,12 @@ def ply_stress(deformed, Q, angles, thickness, plotting=False):
     deformed : vector
         This deformation consists of :math:`(\varepsilon_x, \varepsilon_y
         \varepsilon_{xy},\kappa_x, \kappa_y, \kappa_{xy})^T`
+    Q : list
+        The local stiffness matrix of each ply.
     angles : list
         The rotation of each ply in degrees.
     thickness : list
         The thickness of each ply.
-    Q : list
-        The local stiffness matrix of each ply.
     plotting : bool, optional
         Plotting the through thickness stress distribution or not.
 
@@ -152,7 +152,7 @@ def ply_stress(deformed, Q, angles, thickness, plotting=False):
         the top, middle and bottom of each ply in the laminate.
     """
     # Calculate the strain in local ply axes system.
-    strain = ply_strain(deformed, angles, thickness, Q)
+    strain = ply_strain(deformed, Q, angles, thickness)
 
     # Create a list for the stresses in each ply.
     stress = []
