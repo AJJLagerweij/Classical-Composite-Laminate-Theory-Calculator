@@ -141,7 +141,7 @@ def compliance_rotation(compliance, angle):
 
 
 # Calculate the stiffness matrix of a thin (no bending) laminate.
-def abdthin(Q, angles, thickness):
+def abdthin(Q, angles, thickness, truncate=False):
     r"""
     ABD matrix calculator for a thin laminate.
 
@@ -158,6 +158,8 @@ def abdthin(Q, angles, thickness):
         The rotation of each ply in degrees.
     thickness : list
         The thickness of each ply.
+    truncate : bool
+        Truncates very small numbers when true.
 
     Returns
     -------
@@ -176,12 +178,13 @@ def abdthin(Q, angles, thickness):
     C = np.matrix(C) / np.sum(thickness)
 
     # Truncate very small values.
-    C = np.where(np.abs(C) < np.max(C)*1e-6, 0, C)
+    if truncate is True:
+        C = np.matrix(np.where(np.abs(C) < np.max(C)*1e-6, 0, C))
     return C
 
 
 # Calculate the ABD matrix of a given laminate.
-def abd(Q, angles, thickness):
+def abd(Q, angles, thickness, truncate=False):
     r"""
     Calculate the full ABD matrix of a laminate.
 
@@ -195,6 +198,8 @@ def abd(Q, angles, thickness):
         The rotation of each ply in degrees.
     thickness : list
         The thickness of each ply.
+    truncate : bool
+        Truncates very small numbers when true.
 
     Returns
     -------
@@ -237,7 +242,8 @@ def abd(Q, angles, thickness):
                      [B[2, 0], B[2, 1], B[2, 2], D[2, 0], D[2, 1], D[2, 2]]])
 
     # Truncate very small values.
-    ABD = np.where(np.abs(ABD) < np.max(ABD)*1e-6, 0, ABD)
+    if truncate is True:
+        ABD = np.matrix(np.where(np.abs(ABD) < np.max(ABD)*1e-6, 0, ABD))
     return ABD
 
 
@@ -341,7 +347,6 @@ def cte(Q, angles, thickness, alpha):
     ABD = abd(Q, angles, thickness)
     ABD_inv = matrix_inverse(ABD)
     cte = deformation.load_applied(ABD_inv, alphaEt)  # stren per unit change T
-
     return cte
 
 
