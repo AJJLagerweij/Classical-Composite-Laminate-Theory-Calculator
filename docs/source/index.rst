@@ -22,8 +22,8 @@ following where reccomended:
 .. note:: TODO
 
 	- Adding functions to the homonigization module.
-	- Adding the inverse ply failure calculator for Tsai-Hill.
-	- Adding th buckling / cripling calculators.
+	- Adding a inverse ply failure calculator for Tsai-Hill.
+	- Adding buckling / cripling calculators.
 
 .. toctree::
    :caption: Table of Contents
