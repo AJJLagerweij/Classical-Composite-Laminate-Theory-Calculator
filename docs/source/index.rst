@@ -19,11 +19,11 @@ following where reccomended:
 - Design and Analysis of Composite Structures: With Applications to Aerospace Structures by Christos Kassapoglou (ISBN: 9781118536933, DOI: `10.1002/9781118536933 <https://doi.org/10.1002/9781118536933>`_)
 - Composite Materials: Design and Applications by Daniel Gay (ISBN: 9780429101038 DOI: `10.1201/b17106 <https://doi.org/10.1201/b17106>`_)
 
-.. note:: TODO
+.. todo::
 
-	- Adding functions to the homonigization module.
-	- Adding a inverse ply failure calculator for Tsai-Hill.
-	- Adding buckling / cripling calculators.
+   - Adding functions to the homonigization module.
+   - Adding a inverse ply failure calculator for Tsai-Hill.
+   - Adding buckling / cripling calculators.
 
 .. toctree::
    :caption: Table of Contents
