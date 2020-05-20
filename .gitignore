@@ -6,8 +6,6 @@ __pycache__
 # C extensions
 *.so
 
-
-
 # the documentation build
 docs/source/_build
 docs/build
@@ -105,3 +103,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# VSCode
+.vscode
