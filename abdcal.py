@@ -9,10 +9,10 @@ COHMAS Mechanical Engineering KAUST
 2020
 """
 
-# Import external packages.
+# Import external package.
 import numpy as np
 
-# Import local packages.
+# Import local package.
 import deformation
 
 
